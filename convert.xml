@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="DITA_to_hdoc" default="convert">
+    <target name="convert">
+        <!-- création des dossiers -->
+        <mkdir dir="../resultat" /> 
+        <mkdir dir="../resultat/META-INF" />
+        <copy file="./mimetype" toFile="../resultat/mimetype"/>
+        <copy file="./container.xml" toFile="../resultat/META-INF/container.xml"/>
+    
+        <property name="filePathSrc" value="../resultat/src"/>
+        <!--<property name="dir" value="../"/>-->
+        
+        
+        <dirname property="directoryProperty" file="${filePathSrc}"/>
+        <mkdir dir="${filePathSrc}" />
+        
+        
+        <!-- modification des fichiers pour retirer les doctypes -->
+        <java classname="no_doctype.main">
+            <classpath>
+                <pathelement location="no_doctype.jar"/>
+            </classpath>
+            <arg value="../${dir}"/>
+        </java>
+        
+                
+            
+        
+       <!-- lecture de la map et preparation du fichier concaténé --> 
+        <xslt in="../${dir}/${filename}" out="concat.xml" style="read_map.xsl">
+            <param name="../basedir" expression="${dir}/"></param>
+        </xslt>
+        
+        <!-- gestion des images (copie+rename) -->
+        
+        <xslt in="concat.xml" out="ant_image.xml" style="copy_images.xsl">
+            <param name="basedir" expression="${dir}/"></param>
+        </xslt>
+        
+        
+        <ant antfile="ant_image.xml"></ant>
+        
+        <!-- traitement général -->
+        
+        <xslt in="concat.xml" out="../resultat/resultat.hdoc" style="read_concept_task.xsl">
+            <param name="basedir" expression="${dir}/"></param>
+        </xslt>
+        
+        
+        <!-- ZIP -->
+        
+        <zip destfile="../${out}.zip"
+            basedir="../resultat"
+        />
+        <!-- supression du dossier -->
+        <delete dir="../resultat" />
+        <delete file="ant_image.xml" />
+        <delete file="concat.xml" />
+        
+        <echo>../../${out}.zip</echo>
+        <!-- creation du .scar -->
+        <ant antfile="hdoc_to_opale.ant" dir="hdoctoopale">
+            <property name="InputPath" value="../../${out}.zip"/>
+            <property name="OutputPath" value="../../${out}.scar"/>
+        </ant>
+      
+        
+        
+    </target>
+</project>

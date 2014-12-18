@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.utc.fr/ics/hdoc/schemas/container/hdoc1-container.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<container xmlns="urn:utc.fr:ics:hdoc:container" version="1.0">
+    <rootfiles>
+        <rootfile full-path="resultat.hdoc" media-type="text/xml"></rootfile>
+    </rootfiles>
+</container>
